@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Micro KPI Widget</title>
+    <style>
+        :root {
+            --status-ok: #2ecc71;
+            --status-warn: #f39c12;
+            --status-crit: #e74c3c;
+            --dd-bg: #f9f9f9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: transparent;
+            margin: 0; padding: 5px;
+        }
+
+        /* Kompaktes Grid */
+        .micro-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+        }
+
+        /* Kompakte Kachel */
+        .micro-tile {
+            background: white;
+            border: 1px solid #e1e1e1;
+            border-radius: 4px;
+            padding: 8px 10px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        .micro-tile:hover {
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transform: translateY(-1px);
+        }
+
+        /* Status-Indikator an der Seite */
+        .status-strip {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            width: 4px;
+        }
+
+        .label {
+            font-size: 10px;
+            color: #777;
+            text-transform: uppercase;
+            font-weight: 700;
+            display: block;
+            white-space: nowrap;
+        }
+
+        .value {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            margin-top: 2px;
+        }
+
+        /* Mini-Overlay */
+        #mini-detail {
+            position: fixed;
+            top: 5px; left: 5px; right: 5px; bottom: 5px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: none;
+            flex-direction: column;
+            padding: 10px;
+            z-index: 10;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .chart-mini {
+            flex-grow: 1;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+            margin-top: 5px;
+        }
+
+        .bar { background: #632CA6; flex: 1; border-radius: 1px 1px 0 0; }
+        
+        .close-mini {
+            position: absolute; right: 5px; top: 5px;
+            border: none; background: none; font-size: 16px; cursor: pointer;
+        }
+
+        /* Status Farben */
+        .bg-ok { background-color: var(--status-ok); }
+        .bg-warn { background-color: var(--status-warn); }
+        .bg-crit { background-color: var(--status-crit); }
+    </style>
+</head>
+<body>
+
+<div class="micro-grid">
+    <div class="micro-tile" onclick="openMini('Requests', '8.4k', 'bg-ok')">
+        <div class="status-strip bg-ok"></div>
+        <span class="label">Requests</span>
+        <div class="value">8.4k</div>
+    </div>
+
+    <div class="micro-tile" onclick="openMini('Errors', '14%', 'bg-crit')">
+        <div class="status-strip bg-crit"></div>
+        <span class="label">Errors</span>
+        <div class="value" style="color:var(--status-crit)">14%</div>
+    </div>
+
+    <div class="micro-tile" onclick="openMini('Latency', '2.1s', 'bg-warn')">
+        <div class="status-strip bg-warn"></div>
+        <span class="label">Latency</span>
+        <div class="value">2.1s</div>
+    </div>
+
+    <div class="micro-tile" onclick="openMini('Hosts', '42', 'bg-ok')">
+        <div class="status-strip bg-ok"></div>
+        <span class="label">Hosts</span>
+        <div class="value">42</div>
+    </div>
+</div>
+
+<div id="mini-detail">
+    <button class="close-mini" onclick="closeMini()">×</button>
+    <span id="detail-lbl" class="label">Details</span>
+    <div id="detail-val" class="value">0.0</div>
+    <div class="chart-mini" id="mini-chart"></div>
+</div>
+
+<script>
+    function openMini(name, val, color) {
+        const detail = document.getElementById('mini-detail');
+        const chart = document.getElementById('mini-chart');
+        document.getElementById('detail-lbl').innerText = name;
+        document.getElementById('detail-val').innerText = val;
+        
+        // Reset & Generate Bars
+        chart.innerHTML = '';
+        for(let i=0; i<20; i++) {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = (Math.random() * 90 + 5) + '%';
+            chart.appendChild(bar);
+        }
+        
+        detail.style.display = 'flex';
+    }
+
+    function closeMini() {
+        document.getElementById('mini-detail').style.display = 'none';
+    }
+</script>
+
+</body>
+</html>
